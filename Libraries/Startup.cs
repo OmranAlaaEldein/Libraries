@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Libraries.Models;
+using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace Libraries
 {
@@ -25,6 +28,9 @@ namespace Libraries
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string mySqlConnectionStr = Configuration.GetConnectionString("DefaultConnection");
+            IServiceCollection serviceCollection = services.AddDbContextPool<LibrariesDBContext>(options => options.UseMySql(mySqlConnectionStr));
+
             services.AddControllers();
         }
 
