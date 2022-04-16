@@ -31,6 +31,7 @@ namespace Libraries
             string mySqlConnectionStr = Configuration.GetConnectionString("DefaultConnection");
             IServiceCollection serviceCollection = services.AddDbContextPool<LibrariesDBContext>(options => options.UseMySql(mySqlConnectionStr));
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddControllers();
         }
 
