@@ -33,10 +33,10 @@ namespace Libraries
             IServiceCollection serviceCollection = services.AddDbContextPool<LibrariesDBContext>(options => options.UseMySql(mySqlConnectionStr));
 
             //Swagger
-            services.AddSwaggerGen(c =>
+            /*services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Libraries", Version = "v1" });
-            });
+            });*/
             services.AddControllers();
         }
 
@@ -46,8 +46,8 @@ namespace Libraries
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Libraries v1"));
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Libraries v1"));
             }
 
             app.UseHttpsRedirection();
