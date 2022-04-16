@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Libraries.Models;
+using AutoMapper;
+using Libraries.Models.ViewModels;
 
 namespace Libraries.Controllers
 {
@@ -14,45 +15,68 @@ namespace Libraries.Controllers
     public class BooksController : ControllerBase
     {
         private readonly LibrariesDBContext _context;
+        private readonly IMapper _mapper;
 
-        public BooksController(LibrariesDBContext context)
+        public BooksController(LibrariesDBContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBooks()
+        public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks(string filter = "", int skip = 0, int take = 10)
         {
-            return await _context.Books.ToListAsync();
+            //filter
+            if (!string.IsNullOrEmpty(filter))
+            {
+                var BooksFilter = await _context.Books.
+                                        Where(x => x.Tittle.Equals(filter)).Include(x=>x.Author).Include(x => x.Library).
+                                        Skip(skip).Take(take).ToListAsync();
+                var resultFilter = _mapper.Map<List<BookDto>>(BooksFilter);
+                return resultFilter;
+            }
+
+            //without filter
+            var Books = await _context.Books.Include(x => x.Author).Include(x => x.Library).
+                              Skip(skip).Take(take).ToListAsync();
+            var result = _mapper.Map<List<BookDto>>(Books);
+            return result;
         }
 
         // GET: api/Books/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(int id)
+        public ActionResult<BookDto> GetBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = _context.Books.Include(x => x.Author).Include(x => x.Library).Where(x=>x.Id==id).FirstOrDefault();
 
             if (book == null)
             {
                 return NotFound();
             }
 
-            return book;
+            //map
+            var result = _mapper.Map<BookDto>(book);
+
+            return result;
         }
 
         // PUT: api/Books/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(int id, Book book)
+        public async Task<IActionResult> PutBook(int id, BookCreateUpdateDto bookCreateUpdateDto)
         {
-            if (id != book.Id)
+            //valid
+            if (!ValidBook(bookCreateUpdateDto, id))
             {
                 return BadRequest();
             }
 
-            _context.Entry(book).State = EntityState.Modified;
+            //old Author
+            var Book = _context.Books.Find(id);
+            var oldAuthor = Book.Author;
+
+            //mapper+edit
+            Book = _mapper.Map<BookCreateUpdateDto, Book>(bookCreateUpdateDto, Book);
 
             try
             {
@@ -60,34 +84,38 @@ namespace Libraries.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
                     throw;
-                }
             }
 
-            return NoContent();
+            //remove old Author
+            if(oldAuthor!=null && oldAuthor.Id!= bookCreateUpdateDto.Author.Id)
+                _context.Authors.Remove(oldAuthor);
+
+            return Ok("success update");
         }
 
         // POST: api/Books
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public async Task<ActionResult<Book>> PostBook(BookCreateUpdateDto bookCreateUpdateDto)
         {
+            if (!ValidBook(bookCreateUpdateDto))
+            {
+                return BadRequest();
+            }
+
+            //mapper+add
+            var book = _mapper.Map<Book>(bookCreateUpdateDto);
+            book.AddedTime = DateTime.Now;
+            
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return Ok("success add");
         }
 
         // DELETE: api/Books/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Book>> DeleteBook(int id)
+        public async Task<ActionResult<BookDto>> DeleteBook(int id)
         {
             var book = await _context.Books.FindAsync(id);
             if (book == null)
@@ -98,12 +126,44 @@ namespace Libraries.Controllers
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
 
-            return book;
+            return Ok("success remove");
         }
 
         private bool BookExists(int id)
         {
             return _context.Books.Any(e => e.Id == id);
+        }
+
+        private bool ValidBook(BookCreateUpdateDto book, int id = -1)
+        {
+            //valid book
+            if (id != -1 && id != book.Id)
+            {
+                return false;
+            }
+
+            if (id != -1 && !BookExists(id))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(book.Tittle))
+            {
+                return false;
+            }
+
+            //valid Author 
+            if (string.IsNullOrEmpty(book.Author.Name))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(book.Author.LastName))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
