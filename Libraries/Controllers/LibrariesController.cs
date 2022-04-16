@@ -1,0 +1,172 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Libraries.Models;
+using AutoMapper;
+using Libraries.Models.ViewModels;
+
+namespace Libraries.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LibrariesController : ControllerBase
+    {
+        private readonly LibrariesDBContext _context;
+        private readonly IMapper _mapper;
+
+        public LibrariesController(LibrariesDBContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        // GET: api/Libraries
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<LibraryDto>>> GetLibraries(string filter = "")
+        {
+            //filter
+            if (string.IsNullOrEmpty(filter))
+            {
+                var librariesFilter = await _context.Libraries.Where(x => x.Name.Equals(filter)).ToListAsync(); 
+                var resultFilter = _mapper.Map<List<LibraryDto>>(librariesFilter);
+                return resultFilter;
+            }
+
+            //all
+            var libraries = await _context.Libraries.ToListAsync();
+            var result = _mapper.Map<List<LibraryDto>>(libraries);
+            return result;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<LibraryDto>> GetLibrary(int id)
+        {
+            var library = await _context.Libraries.FindAsync(id);
+
+            if (library == null)
+            {
+                return NotFound();
+            }
+
+            //map
+            var result=_mapper.Map<LibraryDto>(library);
+
+            return result;
+        }
+
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutLibrary(int id, LibraryCreateUpdateDto libraryCreateUpdateDto)
+        {
+            //valid
+            if(!ValidLibrary(libraryCreateUpdateDto, id))
+            {
+                return BadRequest();
+            }
+
+            //list book to remove
+            var oldBook= _context.Libraries.FindAsync(id).Result.Books.Select(x=> x.Id);
+            var newBook = libraryCreateUpdateDto.Books.Select(x => x.Id);
+            var removeBook=newBook.Except(oldBook);
+
+            //mapper+edit
+            var library = _mapper.Map<Library>(libraryCreateUpdateDto);
+
+            _context.Entry(library).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {   
+                    throw;  
+            }
+
+            //remove deleted book
+            var books = _context.Books.Where(x => removeBook.Contains(x.Id));
+            if (books != null)
+            {
+                _context.Books.RemoveRange(books);
+            }
+
+            return NoContent();
+        }
+
+        
+        [HttpPost]
+        public async Task<ActionResult<Library>> PostLibrary(LibraryCreateUpdateDto libraryCreateUpdateDto)
+        {
+            //valid
+            ValidLibrary(libraryCreateUpdateDto);
+            if (!ValidLibrary(libraryCreateUpdateDto))
+            {
+                return BadRequest();
+            }
+
+            //mapper
+            var library = _mapper.Map<Library>(libraryCreateUpdateDto);
+            
+            _context.Libraries.Add(library);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetLibrary", new { id = library.Id }, library);
+        }
+
+        // DELETE: api/Libraries/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Library>> DeleteLibrary(int id)
+        {
+            var library = await _context.Libraries.FindAsync(id);
+            if (library == null)
+            {
+                return NotFound();
+            }
+
+            _context.Libraries.Remove(library);
+            await _context.SaveChangesAsync();
+
+            return library;
+        }
+
+        private bool LibraryExists(int id)
+        {
+            return _context.Libraries.Any(e => e.Id == id);
+        }
+
+        public bool ValidLibrary(LibraryCreateUpdateDto library, int id = -1)
+        {
+            //valid Library
+            if (id!=-1 && id != library.Id)
+            {
+                return false;
+            }
+
+            if (id != -1 && !LibraryExists(id))
+            {
+                return false;
+            }
+
+           
+            if (string.IsNullOrEmpty(library.Name))
+            {
+                return false;
+            }
+
+            //valid Books
+            foreach (var item in library.Books)
+            {
+                if (string.IsNullOrEmpty(item.Tittle))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+}
