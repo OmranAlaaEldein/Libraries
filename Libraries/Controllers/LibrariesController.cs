@@ -26,12 +26,12 @@ namespace Libraries.Controllers
 
         // GET: api/Libraries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LibraryDto>>> GetLibraries(string filter = "")
+        public async Task<ActionResult<IEnumerable<LibraryDto>>> GetLibraries(string filter = "",int skip=0,int take=10)
         {
             //filter
             if (string.IsNullOrEmpty(filter))
             {
-                var librariesFilter = await _context.Libraries.Where(x => x.Name.Equals(filter)).ToListAsync(); 
+                var librariesFilter = await _context.Libraries.Where(x => x.Name.Equals(filter)).Skip(skip).Take(take).ToListAsync(); 
                 var resultFilter = _mapper.Map<List<LibraryDto>>(librariesFilter);
                 return resultFilter;
             }
