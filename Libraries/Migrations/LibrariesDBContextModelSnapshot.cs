@@ -88,10 +88,26 @@ namespace Libraries.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<DateTime>("CloseTime")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
+
+                    b.Property<DateTime>("OpenTime")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("StartDay")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("TotalStorge")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
