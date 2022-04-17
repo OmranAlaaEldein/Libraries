@@ -19,7 +19,9 @@ namespace Libraries.Models
         public int PagesCount { set; get; }
         
         public string Type { set; get; }
-        
+
+        public DateTime AddedTime { set; get; }
+
         public Library Library { set; get; }
 
         public Author Author { set; get; }

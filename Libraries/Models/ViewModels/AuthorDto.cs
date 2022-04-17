@@ -9,13 +9,10 @@ namespace Libraries.Models.ViewModels
     public class AuthorDto
     {
         public int Id { set; get; }
-
+ 
         [Required]
         [MaxLength(20)]
         public string Name { set; get; }
-
-        [Required]
-        [MaxLength(20)]
         public string LastName { set; get; }
 
         [DataType(DataType.EmailAddress)]

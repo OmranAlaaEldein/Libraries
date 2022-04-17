@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "PRJTshvo2IYeWMq6euttB7jM+/qbDhUjJCKp030yO+z6vV2evF6YJvNxdZd00mPEMWxedupUJyBzhF1VRErDvg==",
+=======
+  "dgSpecHash": "z/cv6uX+qlHj0nLKeVivtXDtc1i2BwY/NEUY6Il3TA7JzoFqXmjAEImyevrGzjbTYoD18k6RmV3lrH74T0QCcw==",
+>>>>>>> CRUDBooks
   "success": true,
   "projectFilePath": "C:\\Users\\Omran Alaa Eldein\\Desktop\\work\\BytaByte\\Libraries\\Libraries\\Libraries.csproj",
   "expectedPackageFiles": [

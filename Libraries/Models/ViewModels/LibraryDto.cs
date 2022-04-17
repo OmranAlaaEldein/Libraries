@@ -8,7 +8,8 @@ namespace Libraries.Models.ViewModels
 {
     public class LibraryDto
     {
-        
+        public int Id { set; get; }
+
         public string Name { set; get; }
 
         public string Address { set; get; }
@@ -20,5 +21,6 @@ namespace Libraries.Models.ViewModels
         public DateTime CloseTime { set; get; }
 
         public List<BookDto> Books { set; get; }
+       
     }
 }

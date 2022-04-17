@@ -8,18 +8,22 @@ using System.Threading.Tasks;
 
 namespace Libraries
 {
-    public class UserProfile:Profile
+    public class UserProfile : Profile
     {
         public UserProfile()
         {
-            CreateMap<Library,LibraryDto>();
-            CreateMap<LibraryCreateUpdateDto,Library>();
+            CreateMap<Library, LibraryDto>();
+            CreateMap<LibraryDto, Library>();
+            CreateMap<LibraryCreateUpdateDto, Library>();
 
             CreateMap<BookDto, Book>();
             CreateMap<Book, BookDto>();
-            
+            CreateMap<BookCreateUpdateDto, Book>();
+
+
             CreateMap<AuthorDto, Author>();
             CreateMap<Author, AuthorDto>();
+
         }
     }
 }

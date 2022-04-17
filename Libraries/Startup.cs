@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Libraries.Models;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 using Microsoft.OpenApi.Models;
-
 
 namespace Libraries
 {
@@ -61,6 +59,7 @@ namespace Libraries
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }

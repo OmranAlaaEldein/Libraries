@@ -44,7 +44,11 @@
               "target": "Package",
               "version": "[11.0.0, )"
             },
+<<<<<<< HEAD
             "Microsoft.EntityFrameworkCore": {
+=======
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+>>>>>>> CRUDBooks
               "target": "Package",
               "version": "[3.1.24, )"
             },

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Libraries.Models.ViewModels
 {
-    public class BookDto
+    public class BookCreateUpdateDto
     {
         public int Id { set; get; }
 

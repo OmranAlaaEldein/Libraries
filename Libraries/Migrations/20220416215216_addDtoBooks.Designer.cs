@@ -3,14 +3,16 @@ using System;
 using Libraries.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Libraries.Migrations
 {
     [DbContext(typeof(LibrariesDBContext))]
-    partial class LibrariesDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220416215216_addDtoBooks")]
+    partial class addDtoBooks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,26 +93,10 @@ namespace Libraries.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<DateTime>("CloseTime")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
-
-                    b.Property<DateTime>("OpenTime")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("StartDay")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TotalStorge")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
