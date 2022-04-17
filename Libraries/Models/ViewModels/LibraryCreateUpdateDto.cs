@@ -24,6 +24,6 @@ namespace Libraries.Models.ViewModels
         [Timestamp]
         public DateTime CloseTime { set; get; }
 
-        public List<Book> Books { set; get; }
+        public List<BookDto> Books { set; get; }
     }
 }

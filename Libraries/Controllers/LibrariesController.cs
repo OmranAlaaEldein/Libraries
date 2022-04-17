@@ -29,15 +29,18 @@ namespace Libraries.Controllers
         public async Task<ActionResult<IEnumerable<LibraryDto>>> GetLibraries(string filter = "",int skip=0,int take=10)
         {
             //filter
-            if (string.IsNullOrEmpty(filter))
+            if (!string.IsNullOrEmpty(filter))
             {
-                var librariesFilter = await _context.Libraries.Where(x => x.Name.Equals(filter)).Skip(skip).Take(take).ToListAsync(); 
+                var librariesFilter = await _context.Libraries.
+                    Where(x => x.Name.Equals(filter)).Include(x=>x.Books)
+                    .Skip(skip).Take(take).ToListAsync(); 
                 var resultFilter = _mapper.Map<List<LibraryDto>>(librariesFilter);
                 return resultFilter;
             }
 
-            //all
-            var libraries = await _context.Libraries.ToListAsync();
+            //without filter
+            var libraries = await _context.Libraries.Include(x => x.Books)
+                                          .Skip(skip).Take(take).ToListAsync(); 
             var result = _mapper.Map<List<LibraryDto>>(libraries);
             return result;
         }
@@ -67,17 +70,20 @@ namespace Libraries.Controllers
             {
                 return BadRequest();
             }
+            var Library = _context.Libraries.FindAsync(id).Result;
 
             //list book to remove
-            var oldBook= _context.Libraries.FindAsync(id).Result.Books.Select(x=> x.Id);
-            var newBook = libraryCreateUpdateDto.Books.Select(x => x.Id);
-            var removeBook=newBook.Except(oldBook);
+            List<int> removeBook=new List<int>();
+            if (Library.Books!=null)
+            {
+                var oldBook = Library.Books.Select(x => x.Id);
+                var newBook = libraryCreateUpdateDto.Books.Select(x => x.Id);
+                removeBook = newBook.Except(oldBook).ToList();
+            }
+            
 
             //mapper+edit
-            var library = _mapper.Map<Library>(libraryCreateUpdateDto);
-
-            _context.Entry(library).State = EntityState.Modified;
-
+            Library = _mapper.Map<LibraryCreateUpdateDto,Library>(libraryCreateUpdateDto, Library);
             try
             {
                 await _context.SaveChangesAsync();
@@ -94,7 +100,7 @@ namespace Libraries.Controllers
                 _context.Books.RemoveRange(books);
             }
 
-            return NoContent();
+            return Ok("success Update");
         }
 
         
@@ -110,11 +116,13 @@ namespace Libraries.Controllers
 
             //mapper
             var library = _mapper.Map<Library>(libraryCreateUpdateDto);
-            
+            library.StartDay = DateTime.Now;
+
+            //add
             _context.Libraries.Add(library);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLibrary", new { id = library.Id }, library);
+            return Ok("success Added");
         }
 
         // DELETE: api/Libraries/5
@@ -130,7 +138,7 @@ namespace Libraries.Controllers
             _context.Libraries.Remove(library);
             await _context.SaveChangesAsync();
 
-            return library;
+            return Ok("success deleted");
         }
 
         private bool LibraryExists(int id)
@@ -138,7 +146,7 @@ namespace Libraries.Controllers
             return _context.Libraries.Any(e => e.Id == id);
         }
 
-        public bool ValidLibrary(LibraryCreateUpdateDto library, int id = -1)
+        private bool ValidLibrary(LibraryCreateUpdateDto library, int id = -1)
         {
             //valid Library
             if (id!=-1 && id != library.Id)

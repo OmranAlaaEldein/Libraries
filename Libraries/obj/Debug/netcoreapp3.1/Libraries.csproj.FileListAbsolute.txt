@@ -138,11 +138,8 @@ C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\n
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\AutoMapper.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
-C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
-C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Microsoft.DotNet.InternalAbstractions.dll
-C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
-C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Microsoft.Extensions.PlatformAbstractions.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\obj\Debug\netcoreapp3.1\Libraries.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Omran Alaa Eldein\Desktop\work\BytaByte\Libraries\Libraries\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
